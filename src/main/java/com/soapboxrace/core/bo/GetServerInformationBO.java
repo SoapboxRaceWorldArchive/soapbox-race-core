@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -31,12 +31,7 @@ public class GetServerInformationBO {
         if (ticketToken != null && !ticketToken.equals("null")) {
             serverInfoEntity.setRequireTicket(true);
         }
-        serverInfoEntity.setServerVersion("0.0.8");
-
-        int maxOnlinePlayers = parameterBO.getIntParam("MAX_ONLINE_PLAYERS");
-        if (maxOnlinePlayers != 0) {
-//			serverInfoEntity.setMaxUsersAllowed(maxOnlinePlayers);
-        }
+        serverInfoEntity.setServerVersion("1.0.0");
 
         return serverInfoEntity;
     }

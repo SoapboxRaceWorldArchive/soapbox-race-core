@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -14,7 +14,7 @@ import com.soapboxrace.jaxb.http.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 @Stateless
 public class RewardBO {
@@ -153,7 +153,7 @@ public class RewardBO {
     public void setSkillMultiplierReward(PersonaEntity personaEntity, RewardVO rewardVO,
                                          SkillModRewardType skillModRewardType) {
         CarSlotEntity defaultCarEntity = personaBo.getDefaultCarEntity(personaEntity.getPersonaId());
-        List<SkillModPartEntity> skillModParts = defaultCarEntity.getOwnedCar().getCustomCar().getSkillModParts();
+        Set<SkillModPartEntity> skillModParts = defaultCarEntity.getOwnedCar().getCustomCar().getSkillModParts();
         float skillMultiplier = 0f;
         float maxSkillMultiplier = 30f;
         if (SkillModRewardType.EXPLORER.equals(skillModRewardType)) {
@@ -186,12 +186,11 @@ public class RewardBO {
 
     public Accolades getAccolades(PersonaEntity personaEntity, TreasureHuntEntity treasureHuntEntity,
                                   TreasureHuntConfigEntity treasureHuntConfigEntity,
-                                  ArbitrationPacket arbitrationPacket,
                                   RewardVO rewardVO) {
         Accolades accolades = new Accolades();
         accolades.setFinalRewards(getFinalReward(rewardVO.getRep(), rewardVO.getCash()));
         accolades.setHasLeveledUp(isLeveledUp(personaEntity, rewardVO.getRep()));
-        accolades.setLuckyDrawInfo(getTreasureHuntLuckyDraw(arbitrationPacket.getRank(),
+        accolades.setLuckyDrawInfo(getTreasureHuntLuckyDraw(
                 personaEntity, treasureHuntEntity, treasureHuntConfigEntity));
         accolades.setOriginalRewards(getFinalReward(rewardVO.getRep(), rewardVO.getCash()));
         accolades.setRewardInfo(rewardVO.getArrayOfRewardPart());
@@ -307,10 +306,10 @@ public class RewardBO {
         }
     }
 
-    private LuckyDrawInfo getTreasureHuntLuckyDraw(Integer rank, PersonaEntity personaEntity,
+    private LuckyDrawInfo getTreasureHuntLuckyDraw(PersonaEntity personaEntity,
                                                    TreasureHuntEntity treasureHuntEntity, TreasureHuntConfigEntity treasureHuntConfigEntity) {
         ArrayOfLuckyDrawItem arrayOfLuckyDrawItem = new ArrayOfLuckyDrawItem();
-        arrayOfLuckyDrawItem.getLuckyDrawItem().add(getTreasureHuntRewardItem(personaEntity, treasureHuntConfigEntity, rank));
+        arrayOfLuckyDrawItem.getLuckyDrawItem().add(getTreasureHuntRewardItem(personaEntity, treasureHuntConfigEntity));
 
         ArrayOfLuckyDrawBox arrayOfLuckyDrawBox = new ArrayOfLuckyDrawBox();
         LuckyDrawBox luckyDrawBox = new LuckyDrawBox();
@@ -404,7 +403,7 @@ public class RewardBO {
     }
 
     private LuckyDrawItem getTreasureHuntRewardItem(PersonaEntity personaEntity,
-                                                    TreasureHuntConfigEntity treasureHuntConfigEntity, Integer rank) {
+                                                    TreasureHuntConfigEntity treasureHuntConfigEntity) {
         if (treasureHuntConfigEntity == null) {
             return getRandomRewardItem(personaEntity);
         }

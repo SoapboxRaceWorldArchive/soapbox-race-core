@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -31,9 +31,6 @@ public class PersonaBO {
 
     @EJB
     private OwnedCarDAO ownedCarDAO;
-
-    @EJB
-    private ParameterBO parameterBO;
 
     @EJB
     private PersonaBadgeDAO personaBadgeDAO;
@@ -91,21 +88,14 @@ public class PersonaBO {
     public CarSlotEntity getDefaultCarEntity(Long personaId) {
         PersonaEntity personaEntity = personaDAO.findById(personaId);
         List<CarSlotEntity> carSlotList = getPersonasCar(personaId);
-        Integer curCarIndex = personaEntity.getCurCarIndex();
+        int curCarIndex = personaEntity.getCurCarIndex();
         if (!carSlotList.isEmpty()) {
             if (curCarIndex >= carSlotList.size()) {
                 curCarIndex = carSlotList.size() - 1;
                 CarSlotEntity ownedCarEntity = carSlotList.get(curCarIndex);
                 changeDefaultCar(personaId, ownedCarEntity.getId());
             }
-            CarSlotEntity carSlotEntity = carSlotList.get(curCarIndex);
-            CustomCarEntity customCar = carSlotEntity.getOwnedCar().getCustomCar();
-            customCar.getPaints().size();
-            customCar.getPerformanceParts().size();
-            customCar.getSkillModParts().size();
-            customCar.getVisualParts().size();
-            customCar.getVinyls().size();
-            return carSlotEntity;
+            return carSlotList.get(curCarIndex);
         }
         return null;
     }
@@ -129,6 +119,8 @@ public class PersonaBO {
     public OwnedCarEntity getCarByOwnedCarId(Long ownedCarId) {
         OwnedCarEntity ownedCarEntity = ownedCarDAO.findById(ownedCarId);
         CustomCarEntity customCar = ownedCarEntity.getCustomCar();
+
+        // Load customcar data since we can't do it in the query
         customCar.getPaints().size();
         customCar.getPerformanceParts().size();
         customCar.getSkillModParts().size();

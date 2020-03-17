@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.api;
@@ -31,11 +31,7 @@ public class Achievements {
     public AchievementsPacket loadall(@HeaderParam("securityToken") String securityToken) {
         Long personaId = tokenSessionBO.getActivePersonaId(securityToken);
 
-        if (personaId != 0L) {
-            return achievementBO.loadAll(personaId);
-        }
-
-        return new AchievementsPacket();
+        return achievementBO.loadAll(personaId);
     }
 
     @GET

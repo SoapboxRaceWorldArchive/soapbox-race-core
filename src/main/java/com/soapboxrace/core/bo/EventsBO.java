@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -54,10 +54,7 @@ public class EventsBO {
 
         LocalDate thDate = treasureHuntEntity.getThDate();
         LocalDate nowDate = LocalDate.now();
-
-        System.out.println(thDate.compareTo(nowDate));
-        System.out.println(thDate.equals(nowDate));
-
+        
         if (!thDate.equals(nowDate)) {
             int days = (int) ChronoUnit.DAYS.between(thDate, nowDate);
             if (days >= 2 || treasureHuntEntity.getCoinsCollected() != 32767) {
@@ -166,7 +163,7 @@ public class EventsBO {
             rewardBO.applyRaceReward(rewardVO.getRep(), rewardVO.getCash(), personaEntity, false);
         }
 
-        return rewardBO.getAccolades(personaEntity, treasureHuntEntity, treasureHuntConfigEntity, arbitrationPacket,
+        return rewardBO.getAccolades(personaEntity, treasureHuntEntity, treasureHuntConfigEntity,
                 rewardVO);
     }
 }

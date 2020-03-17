@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.jpa;
@@ -12,8 +12,7 @@ import javax.persistence.*;
 @Table(name = "EVENT")
 @NamedQueries({ //
         @NamedQuery(name = "EventEntity.findAll", query = "SELECT obj FROM EventEntity obj"), //
-        @NamedQuery(name = "EventEntity.findByLevel", query = "SELECT obj FROM EventEntity obj WHERE :level >= obj" +
-                ".minLevel AND isEnabled = true"), //
+        @NamedQuery(name = "EventEntity.findByLevel", query = "SELECT obj FROM EventEntity obj WHERE :level >= obj.minLevel AND obj.isEnabled = true AND :level <= obj.maxLevel"), //
         @NamedQuery(name = "EventEntity.findAllRotatable", query = "SELECT obj FROM EventEntity obj WHERE obj" +
                 ".isRotationEnabled=true")
 })

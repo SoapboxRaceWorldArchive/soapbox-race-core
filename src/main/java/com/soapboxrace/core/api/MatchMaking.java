@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.api;
@@ -63,7 +63,7 @@ public class MatchMaking {
     @Path("/leavequeue")
     @Produces(MediaType.APPLICATION_XML)
     public String leaveQueue(@HeaderParam("securityToken") String securityToken) {
-        matchmakingBO.removeFromQueue(tokenSessionBO.getActivePersonaId(securityToken));
+        matchmakingBO.removePlayerFromQueue(tokenSessionBO.getActivePersonaId(securityToken));
         return "";
     }
 
@@ -94,7 +94,7 @@ public class MatchMaking {
         securityChallenge.setRightSize(50);
         sessionInfo.setChallenge(securityChallenge);
         sessionInfo.setEventId(eventId);
-        EventSessionEntity createEventSession = eventBO.createEventSession(eventId);
+        EventSessionEntity createEventSession = eventBO.createEventSession(securityToken, eventId);
         sessionInfo.setSessionId(createEventSession.getId());
         tokenSessionBO.setActiveLobbyId(securityToken, 0L);
         return sessionInfo;

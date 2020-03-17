@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.xmpp;
@@ -47,22 +47,24 @@ public class SocketClient {
     }
 
     public void send(String command) {
-        System.out.println("C->S [" + command + "]");
+//        System.out.println("C->S [" + command + "]");
         out.println(command);
         out.flush();
     }
 
     public String receive() {
-        String receive = "";
         try {
-            char[] cbuf = new char[10240];
-            in.read(cbuf);
-            receive = new String(cbuf);
+            char[] buf = new char[16384];
+            int n = in.read(buf);
+
+            if (n == -1) {
+                throw new RuntimeException("EOF on XMPP stream");
+            }
+
+            return new String(buf);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to read from XMPP stream", e);
         }
-        System.out.println("S->C [" + receive + "]");
-        return receive;
     }
 
     public Socket getSocket() {

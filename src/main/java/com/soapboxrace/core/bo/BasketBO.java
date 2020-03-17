@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -9,7 +9,8 @@ package com.soapboxrace.core.bo;
 import com.soapboxrace.core.bo.util.AchievementCommerceContext;
 import com.soapboxrace.core.bo.util.OwnedCarConverter;
 import com.soapboxrace.core.dao.*;
-import com.soapboxrace.core.exceptions.RentalPurchaseException;
+import com.soapboxrace.core.engine.EngineException;
+import com.soapboxrace.core.engine.EngineExceptionCode;
 import com.soapboxrace.core.jpa.*;
 import com.soapboxrace.jaxb.http.ArrayOfOwnedCarTrans;
 import com.soapboxrace.jaxb.http.CommerceResultStatus;
@@ -106,16 +107,9 @@ public class BasketBO {
         }
 
         if (performPersonaTransaction(personaEntity, productId)) {
-            InventoryItemEntity item = inventoryItemDao.findByPersonaIdAndHash(personaEntity.getPersonaId(),
-                    powerupProduct.getHash());
-
-            if (item == null) {
-                return CommerceResultStatus.FAIL_INVALID_BASKET;
-            }
-
-            int newUsageCount = item.getRemainingUseCount() + powerupProduct.getUseCount();
-            item.setRemainingUseCount(newUsageCount);
-            inventoryItemDao.update(item);
+            InventoryEntity inventoryEntity = inventoryDao.findByPersonaId(personaEntity.getPersonaId());
+            inventoryBO.addStackedInventoryItem(inventoryEntity, productId, powerupProduct.getUseCount());
+            inventoryDao.update(inventoryEntity);
 
             return CommerceResultStatus.SUCCESS;
         }
@@ -155,7 +149,7 @@ public class BasketBO {
                 OwnedCarTrans ownedCarTrans = OwnedCarConverter.entity2Trans(carSlotEntity.getOwnedCar());
                 commerceResultTrans.setPurchasedCars(arrayOfOwnedCarTrans);
                 arrayOfOwnedCarTrans.getOwnedCarTrans().add(ownedCarTrans);
-            } catch (RentalPurchaseException e) {
+            } catch (EngineException e) {
                 this.performPersonaTransaction(personaEntity, productId, -1, true);
 
                 return CommerceResultStatus.FAIL_MAX_STACK_OR_RENTAL_LIMIT;
@@ -198,7 +192,6 @@ public class BasketBO {
 
         if (performPersonaTransaction(personaEntity, productId)) {
             InventoryEntity inventoryEntity = inventoryBO.getInventory(personaEntity.getPersonaId());
-//            inventoryBO.addFromCatalog(productEntity, personaEntity);
             inventoryBO.addInventoryItem(inventoryEntity, productId);
             return CommerceResultStatus.SUCCESS;
         }
@@ -223,7 +216,7 @@ public class BasketBO {
             List<CarSlotEntity> nonRentals = carSlotDAO.findNonRentalsByPersonaId(personaEntity.getPersonaId());
 
             if (nonRentals.isEmpty()) {
-                throw new RentalPurchaseException("Persona " + personaEntity.getName() + " has no non-rental cars");
+                throw new EngineException("Persona " + personaEntity.getName() + " has no non-rental cars", EngineExceptionCode.MissingRequiredEntitlements);
             }
         }
 
@@ -257,16 +250,7 @@ public class BasketBO {
     }
 
     public List<CarSlotEntity> getPersonasCar(Long personaId) {
-        List<CarSlotEntity> findByPersonaId = carSlotDAO.findByPersonaId(personaId);
-        for (CarSlotEntity carSlotEntity : findByPersonaId) {
-            CustomCarEntity customCar = carSlotEntity.getOwnedCar().getCustomCar();
-            customCar.getPaints().size();
-            customCar.getPerformanceParts().size();
-            customCar.getSkillModParts().size();
-            customCar.getVisualParts().size();
-            customCar.getVinyls().size();
-        }
-        return findByPersonaId;
+        return carSlotDAO.findByPersonaId(personaId);
     }
 
     public boolean sellCar(String securityToken, Long personaId, Long serialNumber) {

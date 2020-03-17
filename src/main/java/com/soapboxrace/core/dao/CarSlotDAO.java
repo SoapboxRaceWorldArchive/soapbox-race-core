@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.dao;
@@ -49,8 +49,8 @@ public class CarSlotDAO extends BaseDAO<CarSlotEntity> {
         return query.getResultList();
     }
 
-    public List<CarSlotEntity> findAllWithExpirationDate() {
-        TypedQuery<CarSlotEntity> query = entityManager.createNamedQuery("CarSlotEntity.findAllWithExpirationDate",
+    public List<CarSlotEntity> findAllExpired() {
+        TypedQuery<CarSlotEntity> query = entityManager.createNamedQuery("CarSlotEntity.findAllExpired",
                 CarSlotEntity.class);
         return query.getResultList();
     }

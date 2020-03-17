@@ -1,12 +1,14 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
 
 import com.soapboxrace.core.dao.*;
+import com.soapboxrace.core.engine.EngineException;
+import com.soapboxrace.core.engine.EngineExceptionCode;
 import com.soapboxrace.core.jpa.*;
 import com.soapboxrace.jaxb.http.*;
 
@@ -203,11 +205,7 @@ public class DriverPersonaBO {
             personaPresence.setUserId(personaEntity.getUser().getId());
             return personaPresence;
         }
-        PersonaPresence personaPresence = new PersonaPresence();
-        personaPresence.setPersonaId(0);
-        personaPresence.setPresence(0L);
-        personaPresence.setUserId(0);
-        return personaPresence;
+        throw new EngineException(EngineExceptionCode.PersonaNotFound);
     }
 
     public void updateStatusMessage(String message, Long personaId) {

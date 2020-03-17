@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -21,6 +21,7 @@ import com.soapboxrace.jaxb.http.InventoryItemTrans;
 import com.soapboxrace.jaxb.http.InventoryTrans;
 
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +50,11 @@ public class InventoryBO {
     @EJB
     private ParameterBO parameterBO;
     //endregion
+
+    @Schedule(minute = "*", hour = "*")
+    public void scheduledDeleteExpiredItems() {
+        inventoryItemDAO.deleteAllExpiredItems();
+    }
 
     //region Exposed methods (API)
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.xmpp;
@@ -145,6 +145,11 @@ public class OpenFireRestApiCli {
         return roomEntities.getMucRooms();
     }
 
+    public void sendChatAnnouncement(String message) {
+        Builder builder = getBuilder("messages/game");
+        builder.post(Entity.entity(message, MediaType.TEXT_PLAIN_TYPE));
+    }
+
     private MUCRoomEntity createGeneralChatRoom(String language, Integer number) {
         String name = "channel." + language + "__" + number;
         Builder builder = getBuilder("chatrooms");
@@ -152,6 +157,8 @@ public class OpenFireRestApiCli {
         mucRoomEntity.setRoomName(name);
         mucRoomEntity.setNaturalName(name);
         mucRoomEntity.setDescription(name);
+        mucRoomEntity.setMaxUsers(0);
+        mucRoomEntity.setPersistent(true);
 
         builder.post(Entity.entity(mucRoomEntity, MediaType.APPLICATION_XML));
 

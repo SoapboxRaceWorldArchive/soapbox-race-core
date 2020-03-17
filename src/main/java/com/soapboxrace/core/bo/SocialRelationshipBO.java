@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -433,7 +433,7 @@ public class SocialRelationshipBO {
         @Override
         public void message(String channel, String message) {
             if ("game_presence_updates".equals(channel)) {
-                System.out.println(message);
+//                System.out.println(message);
 
                 Long[] parts = Arrays.stream(message.split("\\|")).map(Long::parseLong).toArray(Long[]::new);
 

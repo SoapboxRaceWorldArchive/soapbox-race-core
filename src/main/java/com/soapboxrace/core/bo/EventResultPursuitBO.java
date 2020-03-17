@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.bo;
@@ -11,6 +11,8 @@ import com.soapboxrace.core.dao.EventDataDAO;
 import com.soapboxrace.core.dao.EventSessionDAO;
 import com.soapboxrace.core.dao.OwnedCarDAO;
 import com.soapboxrace.core.dao.PersonaDAO;
+import com.soapboxrace.core.engine.EngineException;
+import com.soapboxrace.core.engine.EngineExceptionCode;
 import com.soapboxrace.core.jpa.*;
 import com.soapboxrace.jaxb.http.ExitPath;
 import com.soapboxrace.jaxb.http.PursuitArbitrationPacket;
@@ -56,6 +58,11 @@ public class EventResultPursuitBO {
         eventSessionDao.update(eventSessionEntity);
 
         EventDataEntity eventDataEntity = eventDataDao.findByPersonaAndEventSessionId(activePersonaId, eventSessionId);
+
+        if (eventDataEntity.getFinishReason() != 0) {
+            throw new EngineException("Session already completed.", EngineExceptionCode.SecurityKickedArbitration);
+        }
+
         eventDataEntity.setAlternateEventDurationInMilliseconds(pursuitArbitrationPacket.getAlternateEventDurationInMilliseconds());
         eventDataEntity.setCarId(pursuitArbitrationPacket.getCarId());
         eventDataEntity.setCopsDeployed(pursuitArbitrationPacket.getCopsDeployed());

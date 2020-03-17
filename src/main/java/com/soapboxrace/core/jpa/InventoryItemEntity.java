@@ -1,7 +1,7 @@
 /*
  * This file is part of the Soapbox Race World core source code.
  * If you use any of this code for third-party purposes, please provide attribution.
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  */
 
 package com.soapboxrace.core.jpa;
@@ -40,6 +40,9 @@ import java.time.LocalDateTime;
                 name = "InventoryItemEntity.findAllByInventoryAndType",
                 query = "SELECT obj FROM InventoryItemEntity obj WHERE obj.inventoryEntity.id = " +
                         ":inventoryId AND obj.productEntity.productType = :productType"),
+        @NamedQuery(
+                name = "InventoryItemEntity.deleteAllExpiredItems",
+                query = "DELETE FROM InventoryItemEntity obj WHERE obj.expirationDate IS NOT NULL and obj.expirationDate < current_timestamp")
 })
 public class InventoryItemEntity {
 
